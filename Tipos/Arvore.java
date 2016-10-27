@@ -2,98 +2,16 @@ package Tipos;
 
 public class Arvore<Tipo extends Comparable<Tipo>> 
 {
-    @SuppressWarnings("hiding")
-	private class Elemento<Tipo extends Comparable<Tipo>> 
-    {
-        protected Tipo info;
-        protected Elemento<Tipo> dir, esq;
-        
-        //----------------------------------------------------Construtor-------------------------------------------------//
-        
-        public Elemento(Tipo N)
-        {
-            this.info = N;
-            this.dir = this.esq = null;
-        }
-        
-        //--------------------------------------------------Getters e Setters----------------------------------------------------//
-        
-        public void setDir(Elemento<Tipo> E)
-        {
-            this.dir = E;
-        }
-        
-        public void setEsq(Elemento<Tipo> E)
-        {
-            this.esq = E;
-        }
-        
-        public Elemento<Tipo> getDir()
-        {
-            return this.dir;
-        }
-        
-        public Elemento<Tipo> getEsq()
-        {
-            return this.esq;
-        }
-        
-        public Tipo getInfo()
-        { 
-        	return this.info;
-        }
-        
-        @SuppressWarnings("unused")
-		public void setInfo(Tipo I)
-        {
-        	this.info = I;
-        }
-        
-        //------------------------------------------------Métodos Apocalipticos------------------------------------------------------//
-        
-        public String toString()
-        {
-        	return this.info + "";
-        }
-        
-        public int hashCode()
-        {
-        	int ret = super.hashCode();
-        	ret *= 7 + this.info.hashCode();
-            ret *= 7 + this.esq.hashCode();
-            ret *= 7 + this.dir.hashCode();
-        	return ret;
-        }
-        
-        @SuppressWarnings("unchecked")
-    	@Override
-        public boolean equals(Object _obj) 
-        {
-        	if (_obj == null) return false;
-        	
-        	if (this == _obj) return true;
-        	
-        	if (this.getClass() == _obj.getClass())
-        	{
-        		Elemento<Tipo> proxN = (Elemento<Tipo>)_obj;
-        		
-        		if (this.info == proxN.info && this.esq == proxN.esq && this.dir == proxN.dir) return true;
-        	}
-        	
-        	if (_obj instanceof String)
-        	{
-        		String proxN = (String)_obj;
-        		
-        		if (this.toString().equals(proxN.toString())) return true;
-        	} return false;
-        }
-    }    
-
-    private Elemento<Tipo> raizPrincipal;
+    protected Elemento<Tipo> raizPrincipal;
     
     public Arvore() 
     {
-		this.raizPrincipal = null;
+		this(null);
+	}
+    
+    public Arvore(Tipo _tipo) 
+    {
+		this.raizPrincipal = new Elemento<Tipo>(_tipo);
 	}
     
     public void incluir(Tipo N)
@@ -107,14 +25,14 @@ public class Arvore<Tipo extends Comparable<Tipo>>
             raizPrincipal = new Elemento<Tipo>(N);
         else
         {
-	        if (Raiz.getInfo().compareTo(N) < 0) // incluir na esquerda
+	        if (Raiz.getInfo().compareTo(N) > 0) // incluir na Esquerda
 	        {
 	            if (Raiz.getEsq() == null) 
 	                Raiz.setEsq(new Elemento<Tipo>(N));
 	            else
 	                incluir(Raiz.getEsq(), N);
 	        }
-	        else // <= N , incluir na direita
+	        else // <= N , incluir na Direita
 	        {
 	            if (Raiz.getDir() == null)
 	                Raiz.setDir(new Elemento<Tipo>(N));
@@ -127,6 +45,11 @@ public class Arvore<Tipo extends Comparable<Tipo>>
     public int qtosNos()
     {
         return qtosNos(raizPrincipal);
+    }
+    
+    public Elemento<Tipo> getRaiz()
+    {
+    	return this.raizPrincipal;
     }
     
     private int qtosNos(Elemento<Tipo> Raiz)

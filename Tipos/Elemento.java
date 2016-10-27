@@ -1,8 +1,9 @@
 package Tipos;
 
-public class Elemento <Tipo> 
+public class Elemento<Tipo> 
 {
     protected Tipo info;
+    protected Elemento<Tipo> prox, ant, dir, esq; // Se for árvore, ira ser prox = dir e ant = esq
     
     //-----------------------------------------------------Construtor-------------------------------------------------//
     
@@ -21,6 +22,46 @@ public class Elemento <Tipo>
     public Tipo getInfo()
     {
        return this.info;
+    }
+    
+    public void setAnt(Elemento<Tipo> _c)
+    {
+        this.ant = _c;
+    }
+    
+    public Elemento<Tipo> getAnt()
+    {
+       return this.ant;
+    }
+    
+    public void setProx(Elemento<Tipo> _c)
+    {
+        this.prox = _c;
+    }
+    
+    public Elemento<Tipo> getProx()
+    {
+       return this.prox;
+    }
+    
+    public void setDir(Elemento<Tipo> _c)
+    {
+        this.dir = _c;
+    }
+    
+    public Elemento<Tipo> getDir()
+    {
+       return this.dir;
+    }
+    
+    public void setEsq(Elemento<Tipo> _c)
+    {
+        this.esq = _c;
+    }
+    
+    public Elemento<Tipo> getEsq()
+    {
+       return this.esq;
     }
     
     //------------------------------------------------Métodos Apocalipticos------------------------------------------------------//

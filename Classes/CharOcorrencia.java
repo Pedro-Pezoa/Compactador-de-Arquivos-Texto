@@ -3,13 +3,13 @@ package Classes;
 public class CharOcorrencia implements Comparable<CharOcorrencia>
 {
 	protected int ocorrencia;
-	protected char qualCaracter;
+	protected String qualCaracter;
 	
     //---------------------------------------------------------------------------------------------------------------------------//
     //----------------------------------------------- ----Construtor e Getters---------------------------------------------------//
     //---------------------------------------------------------------------------------------------------------------------------//
 	
-	public CharOcorrencia(int _novaOcorrencia, char _novoChar) 
+	public CharOcorrencia(int _novaOcorrencia, String _novoChar) 
 	{
 		this.ocorrencia = _novaOcorrencia;
 		this.qualCaracter = _novoChar;
@@ -20,7 +20,7 @@ public class CharOcorrencia implements Comparable<CharOcorrencia>
     	return this.ocorrencia;
     }
     
-    public char getQualCaracter()
+    public String getQualCaracter()
     {
     	return this.qualCaracter;
     }
@@ -31,7 +31,7 @@ public class CharOcorrencia implements Comparable<CharOcorrencia>
     
 	public String toString()
 	{
-		if (qualCaracter == ' ' || qualCaracter == ',') return "'" + qualCaracter + "'" + "->" + ocorrencia;
+		if (qualCaracter.equals(" ") || qualCaracter.equals(",")) return "'" + qualCaracter + "'" + "->" + ocorrencia;
 		return qualCaracter + "->" + ocorrencia;
 	}
 

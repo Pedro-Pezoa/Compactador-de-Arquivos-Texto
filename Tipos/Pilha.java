@@ -58,7 +58,7 @@ public class Pilha<Tipo> implements Cloneable
         return (topo == 0);
     }
     
-    public int getQuantidadePilha()
+    public int getSize()
     {
         return this.topo;
     }
@@ -128,10 +128,10 @@ public class Pilha<Tipo> implements Cloneable
     {
     	if (this.isEmpty()) return "[]";
     	
-    	String txt = "[";
+    	String txt = "[ ";
     	for (int i = topo-1; i > 0; i--)  
-    		txt += this.pilha[i].toString() + ",";
-    	return txt + this.pilha[0].toString() + "]";
+    		txt += this.pilha[i].toString() + " , ";
+    	return txt + this.pilha[0].toString() + " ]";
     }
     
     public int hashCode()

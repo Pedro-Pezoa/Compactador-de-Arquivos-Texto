@@ -4,6 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 
+import Tipos.Arvore;
+import Tipos.Elemento;
+import Tipos.Fila;
 import Tipos.ListaDupla;
 
 public class ManipulaByte 
@@ -23,10 +26,31 @@ public class ManipulaByte
         
         for (char c : new String(vetByte).toCharArray())
         	contador[c]++;
-        
+
         this.organizaVet(contador);
+        this.transformaArvore();
 	}
 	
+	private void transformaArvore() throws Exception 
+	{
+		this.listaDeOcorrencias.iniciaPercurssoSequencial(true);
+		CharOcorrencia chare = this.listaDeOcorrencias.getInicio().getInfo();
+		while (this.listaDeOcorrencias.podePercorrer())
+		{
+			Elemento<CharOcorrencia> elem1 = this.listaDeOcorrencias.getAtual();
+			this.listaDeOcorrencias.excluirDoFim();
+			Elemento<CharOcorrencia> elem2 = this.listaDeOcorrencias.getAtual();
+			this.listaDeOcorrencias.excluirDoFim();
+
+			Arvore<CharOcorrencia> arv = new Arvore<CharOcorrencia>(new CharOcorrencia(elem1.getInfo().getOcorrencia()+elem2.getInfo().getOcorrencia(), ""));
+			arv.incluir(elem1.getInfo());
+			arv.incluir(elem2.getInfo());
+			this.listaDeOcorrencias.incluirOrdenado(arv.getRaiz().getInfo());
+			chare = this.listaDeOcorrencias.getInicio().getInfo();
+		}
+		System.out.println(chare);
+	}
+
 	private void organizaVet(int[] _contador)
 	{
 		int[] vetConteudo = new int[256];
@@ -60,7 +84,7 @@ public class ManipulaByte
         }
         
         for (int k = 0; k < vetPos.length; k++) 
-        	if (vetConteudo[k] != 0) this.listaDeOcorrencias.incluirNoFim(new CharOcorrencia(vetConteudo[k], vetPos[k]));
+        	if (vetConteudo[k] != 0) this.listaDeOcorrencias.incluirNoFim(new CharOcorrencia(vetConteudo[k], vetPos[k]+""));
 	}
 	
 	public ListaDupla<CharOcorrencia> getListaOcorrencia()

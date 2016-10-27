@@ -2,94 +2,8 @@ package Tipos;
 
 public class ListaDupla<Tipo extends Comparable<Tipo>>  
 {
-	@SuppressWarnings("hiding")
-    private class Elemento <Tipo extends Comparable<Tipo>> 
-    {
-        protected Tipo info;
-        protected Elemento<Tipo> prox;
-        protected Elemento<Tipo> ant;
-        
-        //----------------------------------------------------Construtor-------------------------------------------------//
-        
-        public Elemento(Tipo _conteudo)
-        {
-            this.info = _conteudo;
-        }
-        
-        //--------------------------------------------------Getters e Setters----------------------------------------------------//
-        
-        @SuppressWarnings("unused")
-		public void setInfo(Tipo _c)
-        {
-            this.info = _c;
-        }
-        
-        public Tipo getInfo()
-        {
-           return this.info;
-        }
-
-        public void setProx(Elemento<Tipo> _c)
-        {
-            this.prox = _c;
-        }
-            
-        public Elemento<Tipo> getProx()
-        {
-            return this.prox;
-        }
-        
-        public void setAnt(Elemento<Tipo> _c)
-        {
-            this.ant = _c;
-        }
-            
-        public Elemento<Tipo> getAnt()
-        {
-            return this.ant;
-        }
-        
-        //------------------------------------------------Métodos Apocalipticos------------------------------------------------------//
-        
-        public String toString()
-        {
-        	return this.info + "";
-        }
-        
-        public int hashCode()
-        {
-        	int ret = super.hashCode();
-        	ret *= 7 + this.info.hashCode();
-            ret *= 7 + this.prox.hashCode();
-            ret *= 7 + this.ant.hashCode();
-        	return ret;
-        }
-        
-        @SuppressWarnings("unchecked")
-    	@Override
-        public boolean equals(Object _obj) 
-        {
-        	if (_obj == null) return false;
-        	
-        	if (this == _obj) return true;
-        	
-        	if (this.getClass() == _obj.getClass())
-        	{
-        		Elemento<Tipo> proxN = (Elemento<Tipo>)_obj;
-        		
-        		if (this.info == proxN.info && this.prox == proxN.prox && this.ant == proxN.ant) return true;
-        	}
-        	
-        	if (_obj instanceof String)
-        	{
-        		String proxN = (String)_obj;
-        		
-        		if (this.toString().equals(proxN.toString())) return true;
-        	} return false;
-        }
-    }
-    
-    protected Elemento<Tipo> inicio, fim;
+    protected Elemento<Tipo> inicio, fim, atual;
+    protected boolean ehReverso, estaPercorrendo;
     
     //---------------------------------------------------------------------------------------------------------------------------//
     //----------------------------------------------- ----Construtor e Getters---------------------------------------------------//
@@ -154,6 +68,7 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
             {
             	Ant.setProx(Aux.getProx());
             	Aux.getProx().setAnt(Ant);
+            	if (estaPercorrendo && this.atual.equals(Aux)) this.atual = Aux.getProx(); 
             }
         }
     }
@@ -170,28 +85,46 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
     
     public void excluirDoInicio()
     {
-        if (this.inicio == this.fim) this.fim = null;
+        if (this.inicio == this.fim) 
+        {
+        	this.fim = this.inicio = null;
+        	finalizaPercurssoSequencial();
+        }
         
         if (this.inicio != null) 
         {
+        	if (this.estaPercorrendo && this.atual.equals(this.inicio) && !this.ehReverso) this.atual = this.inicio.getProx();
+        	else if (this.estaPercorrendo && this.atual.equals(this.inicio) && this.ehReverso) this.atual = null;
         	this.inicio = this.inicio.getProx();
         	this.inicio.setAnt(null);
         }
     }
     
-    public void incluirNoFim(Tipo N)
+    public void finalizaPercurssoSequencial() 
+    {
+		this.atual = null;
+		this.estaPercorrendo = false;
+	}
+
+	public void incluirNoFim(Tipo N)
     {
     	Elemento<Tipo> Novo = new Elemento<Tipo>(N);
-    	
-        if (this.fim != null) this.fim.setProx(Novo);
-        this.fim = Novo;
-        if (inicio == null) inicio = Novo;
+    	if (inicio == null) inicio = fim = Novo;
+    	else
+    	{
+    		this.fim.setProx(Novo);
+    		Novo.setAnt(this.fim);
+    		this.fim = Novo;
+    	}
     }
     
     public void excluirDoFim()
     {
         if (this.inicio != null)
         {
+        	if (this.estaPercorrendo && this.atual.equals(this.fim) && this.ehReverso) this.atual = this.fim.getAnt();
+        	else if (this.estaPercorrendo && this.atual.equals(this.fim) && !this.ehReverso) this.atual = null;
+        	
         	Elemento<Tipo> Aux = this.inicio;
         	
             while (Aux != null && Aux.getProx() != fim)
@@ -200,7 +133,10 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
             if (Aux != null) Aux.setProx(null);
             
             if (this.inicio == this.fim)
+            {
                 this.inicio = this.fim = null;
+                finalizaPercurssoSequencial();
+            }
             
             else this.fim = Aux;
         }
@@ -236,6 +172,30 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
             
             Aux = Aux.getProx();
         }
+    }
+    
+    public void iniciaPercurssoSequencial(boolean _ehReverso)
+    {
+    	if (_ehReverso) this.atual = this.fim;
+    	else this.atual = this.inicio;
+    	this.ehReverso = _ehReverso;
+    	this.estaPercorrendo = true;
+    }
+    
+    public boolean podePercorrer()
+    {
+    	return this.atual != null;
+    }
+    
+    public Elemento<Tipo> getAtual()
+    {
+    	return this.atual;
+    }
+    
+    public void setAtual()
+    {
+    	if (this.ehReverso) this.atual = this.atual.getAnt();
+    	else this.atual = this.atual.getProx();
     }
     
     //---------------------------------------------------------------------------------------------------------------------------//
