@@ -34,12 +34,32 @@ public class CharOcorrencia implements Comparable<CharOcorrencia>
 		if (qualCaracter.equals(" ") || qualCaracter.equals(",")) return "'" + qualCaracter + "'" + "->" + ocorrencia;
 		return qualCaracter + "->" + ocorrencia;
 	}
+	
+	public boolean equals(Object _obj)
+	{
+		if (_obj == null) return false;
+		
+		if (this == _obj) return true;
+		
+		if (this.getClass() == _obj.getClass())
+		{
+			CharOcorrencia chare = (CharOcorrencia)_obj;
+			if (this.ocorrencia == chare.ocorrencia && this.qualCaracter.equals(chare.qualCaracter)) return true;
+		}
+		
+		if (_obj instanceof String)
+		{
+			String chare = (String)_obj;
+			if (this.toString().equals(chare.toString())) return true;
+		}
+		return false;
+	}
 
 	@Override
 	public int compareTo(CharOcorrencia _obj) 
 	{
-		if (this.ocorrencia > _obj.ocorrencia) return 1;
-		if (this.ocorrencia < _obj.ocorrencia) return -1;
+		if (this.ocorrencia > _obj.ocorrencia) return -1;
+		if (this.ocorrencia < _obj.ocorrencia) return 1;
 		return 0;
 	}
 }

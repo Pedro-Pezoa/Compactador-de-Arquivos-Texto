@@ -11,14 +11,13 @@ import Tipos.ListaDupla;
 
 public class ManipulaByte 
 {
-	protected ListaDupla<CharOcorrencia> listaDeOcorrencias;
+	protected Arvore<CharOcorrencia> arvoreDeOcorrencias;
 	
 	@SuppressWarnings("resource")
 	public ManipulaByte(String _nomeArq) throws Exception 
 	{
 		FileInputStream arquivoFisico = new FileInputStream(_nomeArq);
 		DataInputStream data = new DataInputStream(new BufferedInputStream(arquivoFisico));
-		this.listaDeOcorrencias = new ListaDupla<CharOcorrencia>();
         
         byte vetByte[] = new byte[arquivoFisico.available()];
         int[] contador = new int[256];
@@ -27,32 +26,31 @@ public class ManipulaByte
         for (char c : new String(vetByte).toCharArray())
         	contador[c]++;
 
-        this.organizaVet(contador);
-        this.transformaArvore();
+        this.arvoreDeOcorrencias = new Arvore<CharOcorrencia>(this.transformaArvore(this.organizaLista(contador)));
 	}
 	
-	private void transformaArvore() throws Exception 
+	private Elemento<CharOcorrencia> transformaArvore(ListaDupla<CharOcorrencia> _listaDeOcorrencias) throws Exception 
 	{
-		this.listaDeOcorrencias.iniciaPercurssoSequencial(true);
-		CharOcorrencia chare = this.listaDeOcorrencias.getInicio().getInfo();
-		while (this.listaDeOcorrencias.podePercorrer())
+		_listaDeOcorrencias.iniciaPercurssoSequencial(true);
+		while (_listaDeOcorrencias.podePercorrer())
 		{
-			Elemento<CharOcorrencia> elem1 = this.listaDeOcorrencias.getAtual();
-			this.listaDeOcorrencias.excluirDoFim();
-			Elemento<CharOcorrencia> elem2 = this.listaDeOcorrencias.getAtual();
-			this.listaDeOcorrencias.excluirDoFim();
+			Elemento<CharOcorrencia> elem1 = _listaDeOcorrencias.getAtual();
+			_listaDeOcorrencias.excluirDoFim();
+			Elemento<CharOcorrencia> elem2 = _listaDeOcorrencias.getAtual();
+			_listaDeOcorrencias.excluirDoFim();
 
-			Arvore<CharOcorrencia> arv = new Arvore<CharOcorrencia>(new CharOcorrencia(elem1.getInfo().getOcorrencia()+elem2.getInfo().getOcorrencia(), ""));
-			arv.incluir(elem1.getInfo());
-			arv.incluir(elem2.getInfo());
-			this.listaDeOcorrencias.incluirOrdenado(arv.getRaiz().getInfo());
-			chare = this.listaDeOcorrencias.getInicio().getInfo();
+			Arvore<CharOcorrencia> arv = new Arvore<CharOcorrencia>(new Elemento<CharOcorrencia>(new CharOcorrencia(elem1.getInfo().getOcorrencia() + elem2.getInfo().getOcorrencia(),
+					                                                elem1.getInfo().getQualCaracter() + elem2.getInfo().getQualCaracter())));
+			arv.incluirNaEsquerda(elem1);
+			arv.incluirNaDireita(elem2);
+			_listaDeOcorrencias.incluirOrdenado(arv.getRaiz());
 		}
-		System.out.println(chare);
+		return _listaDeOcorrencias.getInicio();
 	}
 
-	private void organizaVet(int[] _contador)
+	private ListaDupla<CharOcorrencia> organizaLista(int[] _contador)
 	{
+		ListaDupla<CharOcorrencia> listaDeOcorrencias = new ListaDupla<>();
 		int[] vetConteudo = new int[256];
 		char[] vetPos = new char[256];
 		
@@ -84,21 +82,23 @@ public class ManipulaByte
         }
         
         for (int k = 0; k < vetPos.length; k++) 
-        	if (vetConteudo[k] != 0) this.listaDeOcorrencias.incluirNoFim(new CharOcorrencia(vetConteudo[k], vetPos[k]+""));
+        	if (vetConteudo[k] != 0) listaDeOcorrencias.incluirNoFim(new Elemento<CharOcorrencia>(new CharOcorrencia(vetConteudo[k], vetPos[k]+"")));
+        
+        return listaDeOcorrencias;
 	}
 	
-	public ListaDupla<CharOcorrencia> getListaOcorrencia()
+	public Arvore<CharOcorrencia> getArvoreOcorrencia()
 	{
-		return this.listaDeOcorrencias;
+		return this.arvoreDeOcorrencias;
 	}
 	
 	public String toString()
 	{
-		return this.listaDeOcorrencias.toString();
+		return this.arvoreDeOcorrencias.toString();
 	}
 	
 	public int hashCode()
 	{
-		return this.listaDeOcorrencias.hashCode();
+		return this.arvoreDeOcorrencias.hashCode();
 	}
 }

@@ -28,11 +28,11 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
     //-----------------------------------------------------Métodos Principais----------------------------------------------------//
     //---------------------------------------------------------------------------------------------------------------------------//
     
-    public void incluirOrdenado(Tipo N)
+    public void incluirOrdenado(Elemento<Tipo> N)
     {
     	Elemento<Tipo> Aux = this.inicio, Ant = null;
         
-        while (Aux != null && Aux.getInfo().compareTo(N) < 0)
+        while (Aux != null && Aux.getInfo().compareTo(N.getInfo()) < 0)
         {
             Ant = Aux;
             Aux = Aux.getProx();
@@ -42,11 +42,10 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
         else if (Aux == null) incluirNoFim(N);
         else 
         {
-        	Elemento<Tipo> Novo = new Elemento<Tipo>(N);
-        	Aux.setAnt(Novo);
-            Novo.setProx(Aux);
-            Novo.setAnt(Ant);
-            Ant.setProx(Novo);
+        	Aux.setAnt(N);
+            N.setProx(Aux);
+            N.setAnt(Ant);
+            Ant.setProx(N);
         }
     }
     
@@ -73,14 +72,16 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
         }
     }
     
-    public void incluirNoInicio(Tipo N)
+    public void incluirNoInicio(Elemento<Tipo> N)
     {
-    	Elemento<Tipo> Novo = new Elemento<Tipo>(N);
-        Novo.setProx(inicio);
-        Novo.setAnt(null);
-        
-        if (inicio == null) fim = Novo;
-        inicio = Novo;
+    	if (this.inicio == null) this.inicio = this.fim = N;
+    	else
+    	{
+    		N.setProx(this.inicio);
+            this.inicio.setAnt(N);
+            N.setAnt(null);
+            this.inicio = N;
+    	}
     }
     
     public void excluirDoInicio()
@@ -106,15 +107,14 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
 		this.estaPercorrendo = false;
 	}
 
-	public void incluirNoFim(Tipo N)
+	public void incluirNoFim(Elemento<Tipo> N)
     {
-    	Elemento<Tipo> Novo = new Elemento<Tipo>(N);
-    	if (inicio == null) inicio = fim = Novo;
+    	if (inicio == null) inicio = fim = N;
     	else
     	{
-    		this.fim.setProx(Novo);
-    		Novo.setAnt(this.fim);
-    		this.fim = Novo;
+    		this.fim.setProx(N);
+    		N.setAnt(this.fim);
+    		this.fim = N;
     	}
     }
     
@@ -220,7 +220,7 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
     	
 		while (Aux != null)
 		{
-			listaNova.incluirNoFim(Aux.getInfo());
+			listaNova.incluirNoFim(Aux);
 			Aux = Aux.getProx();
 		}
 		return listaNova;
@@ -237,7 +237,7 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
     	
 		while (Aux != null)
 		{
-			this.incluirNoFim(Aux.getInfo());
+			this.incluirNoFim(Aux);
 			Aux = Aux.getProx();
 		}
 	}

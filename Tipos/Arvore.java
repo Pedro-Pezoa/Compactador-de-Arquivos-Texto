@@ -9,33 +9,69 @@ public class Arvore<Tipo extends Comparable<Tipo>>
 		this(null);
 	}
     
-    public Arvore(Tipo _tipo) 
+    public Arvore(Elemento<Tipo> N) 
     {
-		this.raizPrincipal = new Elemento<Tipo>(_tipo);
+		this.raizPrincipal = N;
 	}
     
-    public void incluir(Tipo N)
+    public void incluir(Elemento<Tipo> N)
     {
         incluir(raizPrincipal, N);
     }
     
-    private void incluir(Elemento<Tipo> Raiz, Tipo N)
+    public void incluirNaEsquerda(Elemento<Tipo> N)
     {
-        if (Raiz == null) // arvore vazia
-            raizPrincipal = new Elemento<Tipo>(N);
+        incluirNaEsquerda(raizPrincipal, N);
+    }
+    
+    public void incluirNaDireita(Elemento<Tipo> N)
+    {
+    	incluirNaDireita(raizPrincipal, N);
+    }
+    
+    private void incluirNaEsquerda(Elemento<Tipo> Raiz, Elemento<Tipo> n) 
+    {
+    	if (Raiz == null) // arvore vazia
+            raizPrincipal = n;
         else
         {
-	        if (Raiz.getInfo().compareTo(N) > 0) // incluir na Esquerda
+            if (Raiz.getEsq() == null) 
+                Raiz.setEsq(n);
+            else
+            	incluirNaEsquerda(Raiz.getEsq(), n);
+        }
+	}
+    
+    private void incluirNaDireita(Elemento<Tipo> Raiz, Elemento<Tipo> n) 
+    {
+    	if (Raiz == null) // arvore vazia
+            raizPrincipal = n;
+        else
+        {
+            if (Raiz.getDir() == null) 
+                Raiz.setDir(n);
+            else
+            	incluirNaDireita(Raiz.getEsq(), n);
+        }
+	}
+
+	private void incluir(Elemento<Tipo> Raiz, Elemento<Tipo> N)
+    {
+        if (Raiz == null) // arvore vazia
+            raizPrincipal = N;
+        else
+        {
+	        if (Raiz.getInfo().compareTo(N.getInfo()) > 0) // incluir na Esquerda
 	        {
 	            if (Raiz.getEsq() == null) 
-	                Raiz.setEsq(new Elemento<Tipo>(N));
+	                Raiz.setEsq(N);
 	            else
 	                incluir(Raiz.getEsq(), N);
 	        }
 	        else // <= N , incluir na Direita
 	        {
 	            if (Raiz.getDir() == null)
-	                Raiz.setDir(new Elemento<Tipo>(N));
+	                Raiz.setDir(N);
 	            else          
 	                incluir(Raiz.getDir(), N);
 	        }
@@ -64,7 +100,26 @@ public class Arvore<Tipo extends Comparable<Tipo>>
         return visita(Raiz.getEsq()) + " " + Raiz.getInfo()+ " " + visita (Raiz.getDir());
     }
     
-    public String toString()
+    public String getElemento(Tipo _tipo)
+    {
+    	return this.getElemento(this.raizPrincipal, _tipo, "");
+    }
+    
+    private String getElemento(Elemento<Tipo> _raiz, Tipo _tipo, String _result) 
+    {
+    	if (this.existe(_raiz.getDir(), _tipo)) return getElemento(_raiz.getDir(), _tipo, _result+"D");
+    	if (this.existe(_raiz.getEsq(), _tipo)) return getElemento(_raiz.getEsq(), _tipo, _result+"E");
+    	return _result;
+    }
+    
+    private boolean existe(Elemento<Tipo> _raiz, Tipo _tipo) 
+    {
+    	if (_raiz == null) return false;
+    	//System.out.println(_raiz.getInfo().equals(_tipo));
+		return _raiz.getInfo().equals(_tipo) || this.existe(_raiz.getDir(), _tipo) || this.existe(_raiz.getEsq(), _tipo);
+	}
+
+	public String toString()
     {
         return "[ "+ visita(raizPrincipal) + " ]";
     } 
