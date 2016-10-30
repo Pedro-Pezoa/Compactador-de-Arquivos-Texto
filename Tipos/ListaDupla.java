@@ -220,7 +220,7 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
     	
 		while (Aux != null)
 		{
-			listaNova.incluirNoFim(Aux);
+			listaNova.incluirNoFim(Aux.clone());
 			Aux = Aux.getProx();
 		}
 		return listaNova;

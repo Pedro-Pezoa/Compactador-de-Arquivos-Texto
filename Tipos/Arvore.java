@@ -100,7 +100,7 @@ public class Arvore<Tipo extends Comparable<Tipo>>
         return visita(Raiz.getEsq()) + " " + Raiz.getInfo()+ " " + visita (Raiz.getDir());
     }
     
-    public String getElemento(Tipo _tipo)
+    public String getQtosEsqDir(Tipo _tipo)
     {
     	return this.getElemento(this.raizPrincipal, _tipo, "");
     }
@@ -115,7 +115,6 @@ public class Arvore<Tipo extends Comparable<Tipo>>
     private boolean existe(Elemento<Tipo> _raiz, Tipo _tipo) 
     {
     	if (_raiz == null) return false;
-    	//System.out.println(_raiz.getInfo().equals(_tipo));
 		return _raiz.getInfo().equals(_tipo) || this.existe(_raiz.getDir(), _tipo) || this.existe(_raiz.getEsq(), _tipo);
 	}
 

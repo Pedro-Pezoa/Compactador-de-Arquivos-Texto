@@ -105,4 +105,18 @@ public class Elemento<Tipo>
     	}
     	return false;
     }
+    
+    public Elemento<Tipo> clone()
+    {
+    	return new Elemento<Tipo>(this);
+    }
+    
+    public Elemento(Elemento<Tipo> _elem)
+    {
+    	this.ant = _elem.ant;
+    	this.dir = _elem.dir;
+    	this.esq = _elem.esq;
+    	this.prox = _elem.prox;
+    	this.info = _elem.info;
+    }
 }

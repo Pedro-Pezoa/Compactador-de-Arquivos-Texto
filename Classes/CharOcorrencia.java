@@ -31,8 +31,8 @@ public class CharOcorrencia implements Comparable<CharOcorrencia>
     
 	public String toString()
 	{
-		if (qualCaracter.equals(" ") || qualCaracter.equals(",")) return "'" + qualCaracter + "'" + "->" + ocorrencia;
-		return qualCaracter + "->" + ocorrencia;
+		if (this.qualCaracter.equals(" ") || this.qualCaracter.equals(",")) return "'" + this.qualCaracter + "'" + "->" + ocorrencia;
+		return this.qualCaracter + "->" + this.ocorrencia;
 	}
 	
 	public boolean equals(Object _obj)
