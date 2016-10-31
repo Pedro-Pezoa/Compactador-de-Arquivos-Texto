@@ -32,7 +32,7 @@ public class ListaDupla<Tipo extends Comparable<Tipo>>
     {
     	Elemento<Tipo> Aux = this.inicio, Ant = null;
         
-        while (Aux != null && Aux.getInfo().compareTo(N.getInfo()) < 0)
+        while (Aux != null && Aux.getInfo().compareTo(N.getInfo()) <= 0)
         {
             Ant = Aux;
             Aux = Aux.getProx();

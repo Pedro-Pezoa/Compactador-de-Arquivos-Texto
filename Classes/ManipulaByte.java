@@ -4,7 +4,6 @@ import java.io.*;
 
 import Tipos.Arvore;
 import Tipos.Elemento;
-import Tipos.Fila;
 import Tipos.ListaDupla;
 
 public class ManipulaByte 
@@ -28,6 +27,41 @@ public class ManipulaByte
 		this.nomeDoArquivo = _novoNome;
 	}
 	
+	public void descompilaArquivo() throws Exception
+	{
+		BufferedReader ent = new BufferedReader(new InputStreamReader(new FileInputStream(this.nomeDoArquivo)));
+		String txtDescomp = "";
+		
+		while (ent.ready()) txtDescomp += this.descompilaTexto(ent.readLine().replace('1', 'D').replace('0', 'E'));
+		
+		File file = new File(this.nomeDoArquivo);
+        file.createNewFile();
+        
+        PrintWriter sai = new PrintWriter(file);
+        sai.println(txtDescomp);
+        sai.flush();
+        
+        // Fecha todas as conexoes IO com o usuário
+        sai.close();
+        ent.close();
+	}
+	
+	private String descompilaTexto(String _txt) 
+	{
+		String aux = _txt.charAt(0) + "";
+		for (int i = 0, j = 0; i < _txt.length(); i++) 
+		{
+			CharOcorrencia chare = this.arvoreDeOcorrencias.existeEsqDir(aux);
+			if (chare != null)
+			{
+				_txt = 
+				aux = _txt.charAt(i) + "";
+			}
+			else aux += _txt.charAt(i);
+		}
+		return _txt;
+	}
+
 	public void compilaArquivo() throws Exception
 	{
 		// Leitura dos bytes do Arquivo 
@@ -52,7 +86,6 @@ public class ManipulaByte
         
         // Releitura do conteúdo do arquivo para transformar o texto em bytes com a árvore em bytes
         while (ent.ready()) txtCompilado += this.compilaTexto(ent.readLine());
-        
         
         // Cria um novo arquivo que possui o mesmo PATH, NOME e EXTENSÃO e escreve nele o texto compilado em bytes
         File file = new File(this.nomeDoArquivo);
@@ -92,7 +125,7 @@ public class ManipulaByte
 	private Elemento<CharOcorrencia> transformaArvore() throws Exception 
 	{
 		ListaDupla<CharOcorrencia> listaAux = this.listaDeOcorrencias.clonaLista();
-		listaAux.iniciaPercurssoSequencial(true);
+		listaAux.iniciaPercurssoSequencial(true); // Percorre reverso
 		while (listaAux.podePercorrer())
 		{
 			Elemento<CharOcorrencia> elem1 = listaAux.getAtual();
@@ -102,11 +135,19 @@ public class ManipulaByte
 
 			Arvore<CharOcorrencia> arv = new Arvore<CharOcorrencia>(new Elemento<CharOcorrencia>(
 					                                               new CharOcorrencia(elem1.getInfo().getOcorrencia() + 
-					                                            		              elem2.getInfo().getOcorrencia(),
-					                                                                  elem1.getInfo().getQualCaracter() + 
-					                                                                  elem2.getInfo().getQualCaracter())));
-			arv.incluirNaEsquerda(elem1);
-			arv.incluirNaDireita(elem2);
+                                            		               elem2.getInfo().getOcorrencia(),
+                                                                   elem1.getInfo().getQualCaracter() + 
+                                                                   elem2.getInfo().getQualCaracter())));
+			if (elem1.getInfo().getOcorrencia() > elem2.getInfo().getOcorrencia())
+			{
+				arv.incluirNaDireita(elem2);
+				arv.incluirNaEsquerda(elem1);
+			}
+			else if (elem1.getInfo().getOcorrencia() < elem2.getInfo().getOcorrencia())
+			{
+				arv.incluirNaDireita(elem1);
+				arv.incluirNaEsquerda(elem2);
+			}
 			listaAux.incluirOrdenado(arv.getRaiz());
 		}
 		return listaAux.getInicio();
@@ -118,18 +159,18 @@ public class ManipulaByte
 		int[] vetConteudo = new int[256];
 		char[] vetPos = new char[256];
 		
-		for (int i = 0, j = 0; i < _contador.length; i++) 
+		for (int i = 32, j = 0; i < _contador.length; i++) 
         {
         	if (_contador[i] != 0) 
         	{
         		vetConteudo[j] = _contador[i];
-        		vetPos[j++] = (char)i;
+        		vetPos[j++] = (char)(i);
         	}
         }	
         
         int i = 0, j = 1, auxInt = 0;
         char auxChar = ' ';
-        while (i < vetConteudo.length-1)
+        while (vetConteudo[i] > 0)
         {
         	if (vetConteudo[i] < vetConteudo[j])
         	{
@@ -141,13 +182,13 @@ public class ManipulaByte
         		vetPos[i] = vetPos[j];
         		vetPos[j] = auxChar;
         	}
-        	if (j >= vetConteudo.length-1) j = ++i + 1;
+        	if (vetConteudo[j] == 0) j = ++i + 1;
         	else j++;
         }
         
-        for (int k = 0; k < vetPos.length; k++) 
-        	if (vetConteudo[k] != 0) listaDeOcorrencias.incluirNoFim(new Elemento<CharOcorrencia>(
-        			                                                 new CharOcorrencia(vetConteudo[k], vetPos[k]+"")));
+        for (int k = 0; vetConteudo[k] > 0; k++) 
+        	listaDeOcorrencias.incluirNoFim(new Elemento<CharOcorrencia>(
+        			                        new CharOcorrencia(vetConteudo[k], vetPos[k]+"")));
 	}
 	
 	public String toString()

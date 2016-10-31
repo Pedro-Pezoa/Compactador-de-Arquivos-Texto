@@ -124,6 +124,16 @@ public class Compactador {
 		frmCompactador.getContentPane().add(btnLimpar);
 		
 		JButton btnDescompactar = new JButton("Descompactar Arquivo");
+		btnDescompactar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try 
+				{
+					bit.setNomeDoArquivo(txtPath.getText() + txtNomeArq.getText());
+					bit.descompilaArquivo();
+					JOptionPane.showMessageDialog(null, "Descompilado com Sucesso");
+				} catch (Exception e) {JOptionPane.showMessageDialog(null, e.getMessage());}
+			}
+		});
 		btnDescompactar.setFont(new Font("Consolas", Font.PLAIN, 14));
 		btnDescompactar.setBounds(221, 145, 199, 23);
 		frmCompactador.getContentPane().add(btnDescompactar);

@@ -1,5 +1,7 @@
 package Tipos;
 
+import Classes.CharOcorrencia;
+
 public class Arvore<Tipo extends Comparable<Tipo>> 
 {
     protected Elemento<Tipo> raizPrincipal;
@@ -121,5 +123,22 @@ public class Arvore<Tipo extends Comparable<Tipo>>
 	public String toString()
     {
         return "[ "+ visita(raizPrincipal) + " ]";
-    } 
+    }
+
+	public Tipo existeEsqDir(String _aux) 
+	{
+		return existeEsqDir(this.raizPrincipal, _aux , 0);
+	}
+
+	private Tipo existeEsqDir(Elemento<Tipo> _elem, String _aux, int _i)
+	{
+		if (_i == _aux.length())
+		{
+			if (_elem.getDir() == null && _elem.getEsq() == null) return _elem.getInfo();
+			return null;
+		}
+		if (_aux.charAt(_i) == 'D') return existeEsqDir(_elem.getDir(), _aux, ++_i);
+		if (_aux.charAt(_i) == 'E') return existeEsqDir(_elem.getEsq(), _aux, ++_i);
+		return null;
+	} 
 }
