@@ -96,22 +96,22 @@ public class Arvore<Tipo extends Comparable<Tipo>> implements Serializable
         return (qtosNos(Raiz.getDir()) + qtosNos(Raiz.getEsq()) + 1);
     }
     
-    public String getQtosEsqDir(Tipo _tipo)
+    public String getQtosEsqDir(Tipo _folha)
     {
-    	return this.getElemento(this.raizPrincipal, _tipo, "");
+    	return this.getElemento(this.raizPrincipal, _folha, "");
     }
     
-    private String getElemento(Elemento<Tipo> _raiz, Tipo _tipo, String _result) 
+    private String getElemento(Elemento<Tipo> _raiz, Tipo _folha, String _result) 
     {
-    	if (this.existe(_raiz.getDir(), _tipo)) return getElemento(_raiz.getDir(), _tipo, _result+"D");
-    	if (this.existe(_raiz.getEsq(), _tipo)) return getElemento(_raiz.getEsq(), _tipo, _result+"E");
+    	if (this.existe(_raiz.getDir(), _folha)) return getElemento(_raiz.getDir(), _folha, _result+"D");
+    	if (this.existe(_raiz.getEsq(), _folha)) return getElemento(_raiz.getEsq(), _folha, _result+"E");
     	return _result;
     }
     
-    private boolean existe(Elemento<Tipo> _raiz, Tipo _tipo) 
+    private boolean existe(Elemento<Tipo> _raiz, Tipo _folha) 
     {
     	if (_raiz == null) return false;
-		return _raiz.getInfo().equals(_tipo) || this.existe(_raiz.getDir(), _tipo) || this.existe(_raiz.getEsq(), _tipo);
+		return _raiz.getInfo().equals(_folha) || this.existe(_raiz.getDir(), _folha) || this.existe(_raiz.getEsq(), _folha);
 	}
 
 	public Tipo existeEsqDir(String _aux) 

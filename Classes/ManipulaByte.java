@@ -29,39 +29,43 @@ public class ManipulaByte
 		this.nomeDoArquivo = _novoNome;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void descompilaArquivo() throws Exception
 	{
-		BufferedReader ent = new BufferedReader(new InputStreamReader(new FileInputStream(this.nomeDoArquivo)));
-		String txtDescomp = "";
+		// Leitura das classes BitSet e arvore de ocorrência
+		ObjectInputStream obji = new ObjectInputStream(new FileInputStream(this.nomeDoArquivo));
+		this.bit = (BitSet)obji.readObject();
+		this.arvoreDeOcorrencias = (Arvore<CharOcorrencia>)obji.readObject();
 		
-		while (ent.ready()) txtDescomp += this.descompilaTexto(ent.readLine().replace('1', 'D').replace('0', 'E'));
-		
-		File file = new File(this.nomeDoArquivo);
-        file.createNewFile();
-        
-        PrintWriter sai = new PrintWriter(file);
-        sai.println(txtDescomp);
-        sai.flush();
-        
-        // Fecha todas as conexoes IO com o usuário
-        sai.close();
-        ent.close();
-	}
-	
-	private String descompilaTexto(String _txt) 
-	{
-		String aux = _txt.charAt(0) + "";
-		for (int i = 0, j = 0; i < _txt.length(); i++) 
+		// For para percorrer o BitSet e selecionar uma parcela dos bits para poder procurar na arvore de ocorrência e assim transformar os bits em texto
+		String aux = "", result = "";
+		for (int i = 0; i < this.bit.length(); i++) 
 		{
+			// Verifica se é true ou false
+			if (bit.get(i)) aux += "D";
+			else aux += "E";
+			
+			// Percorre a arvore para verificar se existe uma ocorrência desse bit e se houver ira pegar o caracter e concatenar na String result
 			CharOcorrencia chare = this.arvoreDeOcorrencias.existeEsqDir(aux);
 			if (chare != null)
 			{
-				_txt = 
-				aux = _txt.charAt(i) + "";
+				result += chare.getQualCaracter();
+				aux = "";
 			}
-			else aux += _txt.charAt(i);
 		}
-		return _txt;
+		
+		// Cria um novo arquivo para printar nele o texto descompilado
+		File file = new File(this.nomeDoArquivo);
+        file.createNewFile();
+        
+        // Printa o texto descompilado
+        PrintWriter sai = new PrintWriter(new FileOutputStream(this.nomeDoArquivo));
+        sai.println(result);
+        sai.flush();
+        
+        // Fecha todas as classes de entrada e saida de dados
+        sai.close();
+        obji.close();
 	}
 
 	public void compilaArquivo() throws Exception
@@ -106,8 +110,6 @@ public class ManipulaByte
         // Printa no arquivo a classe BitSet e a árvore de ocorrência
         objs.writeObject(bit);
         objs.flush();
-        objs.writeChars("///////");
-        objs.flush();
         objs.writeObject(arvoreDeOcorrencias);
         objs.flush();
         
@@ -121,31 +123,18 @@ public class ManipulaByte
 	private String compilaTexto(String _txt) 
 	{
 		this.listaDeOcorrencias.iniciaPercurssoSequencial(false);
-		int i = 0;
-		while(this.listaDeOcorrencias.podePercorrer() && i < _txt.length())
+		String result = "";
+		for (int i = 0; i < _txt.length();)
 		{
-			if (this.listaDeOcorrencias.getAtual().getInfo().getQualCaracter().equals(_letra)) 
-				return this.arvoreDeOcorrencias.getQtosEsqDir(this.listaDeOcorrencias.getAtual().getInfo()).replace('D', '1').replace('E', '0');
-			this.listaDeOcorrencias.setAtual();
+			if (this.listaDeOcorrencias.getAtual().getInfo().getQualCaracter().equals(_txt.charAt(i) + "")) 
+			{
+				result += this.arvoreDeOcorrencias.getQtosEsqDir(this.listaDeOcorrencias.getAtual().getInfo()).replace('D', '1').replace('E', '0');
+				this.listaDeOcorrencias.iniciaPercurssoSequencial(false);
+				i++;
+			}
+			else this.listaDeOcorrencias.setAtual();
 		}
-		return null;
-		
-//		String result = "";
-//		for (int i = 0; i < _txt.length(); i++) 
-//			result += auxCompilaTexto(_txt.charAt(i)+"");
-//		return result;
-	}
-
-	private String auxCompilaTexto(String _letra) 
-	{
-		this.listaDeOcorrencias.iniciaPercurssoSequencial(false);
-		while(this.listaDeOcorrencias.podePercorrer())
-		{
-			if (this.listaDeOcorrencias.getAtual().getInfo().getQualCaracter().equals(_letra)) 
-				return this.arvoreDeOcorrencias.getQtosEsqDir(this.listaDeOcorrencias.getAtual().getInfo()).replace('D', '1').replace('E', '0');
-			this.listaDeOcorrencias.setAtual();
-		}
-		return null;
+		return result;
 	}
 
 	private Elemento<CharOcorrencia> transformaArvore() throws Exception 

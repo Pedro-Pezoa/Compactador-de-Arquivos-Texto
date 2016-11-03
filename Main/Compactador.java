@@ -123,7 +123,7 @@ public class Compactador {
 					bit.setNomeDoArquivo(lblNomeArquivo.getText());
 					bit.descompilaArquivo();
 					JOptionPane.showMessageDialog(null, "Descompilado com Sucesso");
-				} catch (Exception e) {JOptionPane.showMessageDialog(null, e.getMessage());}
+				} catch (Exception e) {System.err.println(e.toString());}
 			}
 		});
 		btnDescompactar.setFont(new Font("Consolas", Font.PLAIN, 14));
