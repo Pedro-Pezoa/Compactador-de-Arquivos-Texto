@@ -1,6 +1,8 @@
 package Classes;
 
-public class CharOcorrencia implements Comparable<CharOcorrencia>
+import java.io.Serializable;
+
+public class CharOcorrencia implements Comparable<CharOcorrencia>, Serializable
 {
 	protected int ocorrencia;
 	protected String qualCaracter;

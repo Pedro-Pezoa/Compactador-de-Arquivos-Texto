@@ -1,6 +1,7 @@
 package Classes;
 
 import java.io.*;
+import java.util.BitSet;
 
 import Tipos.Arvore;
 import Tipos.Elemento;
@@ -9,8 +10,9 @@ import Tipos.ListaDupla;
 public class ManipulaByte 
 {
 	protected Arvore<CharOcorrencia> arvoreDeOcorrencias;
-	protected String nomeDoArquivo;
 	protected ListaDupla<CharOcorrencia> listaDeOcorrencias;
+	protected String nomeDoArquivo;
+	protected BitSet bit;
 	
 	@SuppressWarnings("resource")
 	public ManipulaByte() throws Exception {}
@@ -77,6 +79,8 @@ public class ManipulaByte
         for (char c : new String(vetByte).toCharArray())
         	contador[c]++;
  
+        // Instância uma String que ira receber todo o conteúdo do arquivo para transformar em bits e um BufferedReader 
+        // e ler novamente o texto do arquivo
         String txtCompilado = "";
         BufferedReader ent = new BufferedReader(new InputStreamReader(new FileInputStream(this.nomeDoArquivo)));
         
@@ -84,19 +88,31 @@ public class ManipulaByte
         this.organizaLista(contador);
         arvoreDeOcorrencias = new Arvore<CharOcorrencia>(this.transformaArvore());
         
-        // Releitura do conteúdo do arquivo para transformar o texto em bytes com a árvore em bytes
+        // Releitura do conteúdo do arquivo para transformar o texto em bits com a árvore de ocorrência
         while (ent.ready()) txtCompilado += this.compilaTexto(ent.readLine());
         
-        // Cria um novo arquivo que possui o mesmo PATH, NOME e EXTENSÃO e escreve nele o texto compilado em bytes
+        // Cria o BitSet para poder alterar todas as posições do BitSet para true comparado com o texto em bits
+        bit = new BitSet(txtCompilado.length());
+        for (int i = 0; i < txtCompilado.length(); i++) 
+        	if (txtCompilado.charAt(i) == '1') bit.set(i);
+        
+        // Cria um novo arquivo que possui o mesmo PATH, NOME e EXTENSÃO e escreve nele o texto compilado
         File file = new File(this.nomeDoArquivo);
         file.createNewFile();
         
-        PrintWriter sai = new PrintWriter(file);
-        sai.println(txtCompilado);
-        sai.flush();
+        // Cria um ObjectOutputStream para poder colocar no arquivo o BitSet do texto com a árvore de ocorrências
+        ObjectOutputStream objs = new ObjectOutputStream(new FileOutputStream(this.nomeDoArquivo)); 
         
-        // Fecha todas as conexoes IO com o usuário
-        sai.close();
+        // Printa no arquivo a classe BitSet e a árvore de ocorrência
+        objs.writeObject(bit);
+        objs.flush();
+        objs.writeChars("///////");
+        objs.flush();
+        objs.writeObject(arvoreDeOcorrencias);
+        objs.flush();
+        
+        // Fecha todas as classes de entrada e saida de dados
+        objs.close();
         ent.close();
         data.close();
         arquivoFisico.close();
@@ -104,10 +120,20 @@ public class ManipulaByte
 	
 	private String compilaTexto(String _txt) 
 	{
-		String result = "";
-		for (int i = 0; i < _txt.length(); i++) 
-			result += auxCompilaTexto(_txt.charAt(i)+"");
-		return result;
+		this.listaDeOcorrencias.iniciaPercurssoSequencial(false);
+		int i = 0;
+		while(this.listaDeOcorrencias.podePercorrer() && i < _txt.length())
+		{
+			if (this.listaDeOcorrencias.getAtual().getInfo().getQualCaracter().equals(_letra)) 
+				return this.arvoreDeOcorrencias.getQtosEsqDir(this.listaDeOcorrencias.getAtual().getInfo()).replace('D', '1').replace('E', '0');
+			this.listaDeOcorrencias.setAtual();
+		}
+		return null;
+		
+//		String result = "";
+//		for (int i = 0; i < _txt.length(); i++) 
+//			result += auxCompilaTexto(_txt.charAt(i)+"");
+//		return result;
 	}
 
 	private String auxCompilaTexto(String _letra) 
@@ -133,22 +159,20 @@ public class ManipulaByte
 			Elemento<CharOcorrencia> elem2 = listaAux.getAtual();
 			listaAux.excluirDoFim();
 
-			Arvore<CharOcorrencia> arv = new Arvore<CharOcorrencia>(new Elemento<CharOcorrencia>(
-					                                               new CharOcorrencia(elem1.getInfo().getOcorrencia() + 
-                                            		               elem2.getInfo().getOcorrencia(),
-                                                                   elem1.getInfo().getQualCaracter() + 
-                                                                   elem2.getInfo().getQualCaracter())));
+			Elemento<CharOcorrencia> elem3 = new Elemento<CharOcorrencia>(new CharOcorrencia(
+					                 elem1.getInfo().getOcorrencia() + elem2.getInfo().getOcorrencia(),
+					                 elem1.getInfo().getQualCaracter() + elem2.getInfo().getQualCaracter()));
 			if (elem1.getInfo().getOcorrencia() > elem2.getInfo().getOcorrencia())
 			{
-				arv.incluirNaDireita(elem2);
-				arv.incluirNaEsquerda(elem1);
+				elem3.setDir(elem2);
+				elem3.setEsq(elem1);
 			}
-			else if (elem1.getInfo().getOcorrencia() < elem2.getInfo().getOcorrencia())
+			else
 			{
-				arv.incluirNaDireita(elem1);
-				arv.incluirNaEsquerda(elem2);
+				elem3.setDir(elem1);
+				elem3.setEsq(elem2);
 			}
-			listaAux.incluirOrdenado(arv.getRaiz());
+			listaAux.incluirOrdenado(elem3);
 		}
 		return listaAux.getInicio();
 	}
@@ -187,8 +211,7 @@ public class ManipulaByte
         }
         
         for (int k = 0; vetConteudo[k] > 0; k++) 
-        	listaDeOcorrencias.incluirNoFim(new Elemento<CharOcorrencia>(
-        			                        new CharOcorrencia(vetConteudo[k], vetPos[k]+"")));
+        	listaDeOcorrencias.incluirNoFim(new Elemento<CharOcorrencia>(new CharOcorrencia(vetConteudo[k], vetPos[k]+"")));
 	}
 	
 	public String toString()

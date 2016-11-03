@@ -8,19 +8,22 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.JTextField;
+import javax.swing.plaf.FileChooserUI;
 
 import Classes.ManipulaByte;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 public class Compactador {
 
 	private JFrame frmCompactador;
-	private JTextField txtNomeArq, txtPath;
 	private ManipulaByte bit;
 
 	/**
@@ -61,9 +64,14 @@ public class Compactador {
 			}
 		});
 		frmCompactador.setTitle("Ger\u00EAnciador de Compacta\u00E7\u00E3o de Arquivos Textos");
-		frmCompactador.setBounds(100, 100, 625, 227);
+		frmCompactador.setBounds(100, 100, 625, 193);
 		frmCompactador.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmCompactador.getContentPane().setLayout(null);
+		
+		JLabel lblNomeArquivo = new JLabel("");
+		lblNomeArquivo.setFont(new Font("Consolas", Font.PLAIN, 16));
+		lblNomeArquivo.setBounds(237, 92, 346, 14);
+		frmCompactador.getContentPane().add(lblNomeArquivo);
 		
 		JLabel lblBemVindoAo = new JLabel("Bem Vindo ao Compactador de Arquivos Texto");
 		lblBemVindoAo.setFont(new Font("Consolas", Font.PLAIN, 26));
@@ -75,67 +83,51 @@ public class Compactador {
 		lblEscolhaUmaDas.setBounds(126, 46, 356, 24);
 		frmCompactador.getContentPane().add(lblEscolhaUmaDas);
 		
-		JLabel lblNewLabel = new JLabel("Nome do Arquivo:");
-		lblNewLabel.setFont(new Font("Consolas", Font.PLAIN, 16));
-		lblNewLabel.setBounds(36, 95, 144, 14);
-		frmCompactador.getContentPane().add(lblNewLabel);
-		
-		JLabel lblNewLabel_1 = new JLabel("PATH do Arquivo:");
-		lblNewLabel_1.setFont(new Font("Consolas", Font.PLAIN, 16));
-		lblNewLabel_1.setBounds(36, 120, 144, 14);
-		frmCompactador.getContentPane().add(lblNewLabel_1);
-		
-		txtNomeArq = new JTextField();
-		txtNomeArq.setFont(new Font("Consolas", Font.PLAIN, 16));
-		txtNomeArq.setBounds(179, 92, 396, 20);
-		frmCompactador.getContentPane().add(txtNomeArq);
-		txtNomeArq.setColumns(10);
-		
-		txtPath = new JTextField();
-		txtPath.setFont(new Font("Consolas", Font.PLAIN, 16));
-		txtPath.setBounds(179, 117, 396, 20);
-		frmCompactador.getContentPane().add(txtPath);
-		txtPath.setColumns(10);
+		JLabel label = new JLabel("Nome e Path do Arquivo:");
+		label.setFont(new Font("Consolas", Font.PLAIN, 16));
+		label.setBounds(20, 92, 207, 14);
+		frmCompactador.getContentPane().add(label);
 		
 		JButton btnCompactar = new JButton("Compactar Arquivo");
 		btnCompactar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try 
 				{
-					bit.setNomeDoArquivo(txtPath.getText() + txtNomeArq.getText());
+					bit.setNomeDoArquivo(lblNomeArquivo.getText());
 					bit.compilaArquivo();
 					JOptionPane.showMessageDialog(null, "Compilado com Sucesso");
 				} catch (Exception e) {JOptionPane.showMessageDialog(null, e.getMessage());}
 			}
 		});
 		btnCompactar.setFont(new Font("Consolas", Font.PLAIN, 14));
-		btnCompactar.setBounds(36, 145, 175, 23);
+		btnCompactar.setBounds(199, 117, 175, 23);
 		frmCompactador.getContentPane().add(btnCompactar);
 		
-		JButton btnLimpar = new JButton("Limpar Campos");
-		btnLimpar.addActionListener(new ActionListener() {
+		JButton btnEscolher = new JButton("Escolher Arquivo");
+		btnEscolher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				txtNomeArq.setText("");
-				txtPath.setText("");
+				JFileChooser fl = new JFileChooser();
+				fl.showOpenDialog(null);
+				lblNomeArquivo.setText(fl.getSelectedFile().toString());
 			}
 		});
-		btnLimpar.setFont(new Font("Consolas", Font.PLAIN, 14));
-		btnLimpar.setBounds(430, 145, 145, 23);
-		frmCompactador.getContentPane().add(btnLimpar);
+		btnEscolher.setFont(new Font("Consolas", Font.PLAIN, 14));
+		btnEscolher.setBounds(20, 117, 169, 23);
+		frmCompactador.getContentPane().add(btnEscolher);
 		
 		JButton btnDescompactar = new JButton("Descompactar Arquivo");
 		btnDescompactar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try 
 				{
-					bit.setNomeDoArquivo(txtPath.getText() + txtNomeArq.getText());
+					bit.setNomeDoArquivo(lblNomeArquivo.getText());
 					bit.descompilaArquivo();
 					JOptionPane.showMessageDialog(null, "Descompilado com Sucesso");
 				} catch (Exception e) {JOptionPane.showMessageDialog(null, e.getMessage());}
 			}
 		});
 		btnDescompactar.setFont(new Font("Consolas", Font.PLAIN, 14));
-		btnDescompactar.setBounds(221, 145, 199, 23);
+		btnDescompactar.setBounds(384, 117, 199, 23);
 		frmCompactador.getContentPane().add(btnDescompactar);
 	}
 }

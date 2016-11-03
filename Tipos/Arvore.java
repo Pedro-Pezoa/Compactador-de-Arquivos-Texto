@@ -1,8 +1,8 @@
 package Tipos;
 
-import Classes.CharOcorrencia;
+import java.io.Serializable;
 
-public class Arvore<Tipo extends Comparable<Tipo>> 
+public class Arvore<Tipo extends Comparable<Tipo>> implements Serializable 
 {
     protected Elemento<Tipo> raizPrincipal;
     
@@ -96,12 +96,6 @@ public class Arvore<Tipo extends Comparable<Tipo>>
         return (qtosNos(Raiz.getDir()) + qtosNos(Raiz.getEsq()) + 1);
     }
     
-    private String visita(Elemento<Tipo> Raiz)
-    {
-        if (Raiz == null) return "";
-        return visita(Raiz.getEsq()) + " " + Raiz.getInfo()+ " " + visita (Raiz.getDir());
-    }
-    
     public String getQtosEsqDir(Tipo _tipo)
     {
     	return this.getElemento(this.raizPrincipal, _tipo, "");
@@ -120,11 +114,6 @@ public class Arvore<Tipo extends Comparable<Tipo>>
 		return _raiz.getInfo().equals(_tipo) || this.existe(_raiz.getDir(), _tipo) || this.existe(_raiz.getEsq(), _tipo);
 	}
 
-	public String toString()
-    {
-        return "[ "+ visita(raizPrincipal) + " ]";
-    }
-
 	public Tipo existeEsqDir(String _aux) 
 	{
 		return existeEsqDir(this.raizPrincipal, _aux , 0);
@@ -141,4 +130,22 @@ public class Arvore<Tipo extends Comparable<Tipo>>
 		if (_aux.charAt(_i) == 'E') return existeEsqDir(_elem.getEsq(), _aux, ++_i);
 		return null;
 	} 
+	
+	public int hashCode()
+	{
+		int ret = super.hashCode();
+		ret *= 7 + this.raizPrincipal.hashCode();
+		return ret;
+	}
+	
+	public String toString()
+    {
+        return "[ "+ visita(raizPrincipal) + " ]";
+    }
+	
+	private String visita(Elemento<Tipo> Raiz)
+    {
+        if (Raiz == null) return "";
+        return visita(Raiz.getEsq()) + " " + Raiz.getInfo()+ " " + visita (Raiz.getDir());
+    }
 }
