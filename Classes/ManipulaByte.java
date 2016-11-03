@@ -14,7 +14,6 @@ public class ManipulaByte
 	protected String nomeDoArquivo;
 	protected BitSet bit;
 	
-	@SuppressWarnings("resource")
 	public ManipulaByte() throws Exception {}
 	
 	public String getNomeDoArquivo()
@@ -132,7 +131,7 @@ public class ManipulaByte
 				this.listaDeOcorrencias.iniciaPercurssoSequencial(false);
 				i++;
 			}
-			else this.listaDeOcorrencias.setAtual();
+			else this.listaDeOcorrencias.setPosAtual();
 		}
 		return result;
 	}
