@@ -21,6 +21,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+/**
+ * Programa de compilador e descompilador de arquivos texto de qualquer tipo, você escolhe seu arquivo texto e opta por compilar ou descompilar esse arquivo
+ * @author Pedro Luiz Pezoa u15190
+ * @since 2016
+ */
 public class Compactador {
 
 	private JFrame frmCompactador;
@@ -107,8 +112,7 @@ public class Compactador {
 		btnEscolher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fl = new JFileChooser();
-				fl.showOpenDialog(null);
-				lblNomeArquivo.setText(fl.getSelectedFile().toString());
+				if (fl.showOpenDialog(null) == 0) lblNomeArquivo.setText(fl.getSelectedFile().toString());
 			}
 		});
 		btnEscolher.setFont(new Font("Consolas", Font.PLAIN, 14));
@@ -123,11 +127,20 @@ public class Compactador {
 					bit.setNomeDoArquivo(lblNomeArquivo.getText());
 					bit.descompilaArquivo();
 					JOptionPane.showMessageDialog(null, "Descompilado com Sucesso");
-				} catch (Exception e) {System.err.println(e.toString());}
+				} catch (Exception e) {JOptionPane.showMessageDialog(null, e.getMessage());}
 			}
 		});
 		btnDescompactar.setFont(new Font("Consolas", Font.PLAIN, 14));
 		btnDescompactar.setBounds(384, 117, 199, 23);
 		frmCompactador.getContentPane().add(btnDescompactar);
+	}
+	
+	/**
+	 * Método que cria uma String que representa os atributos da classe em sí
+	 * @return Uma String que possui os valores dos atributos da classe em sí
+	 */
+	public String toString()
+	{
+		return this.bit.toString();
 	}
 }
